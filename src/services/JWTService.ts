@@ -17,6 +17,6 @@ export class JWTService {
 
   public static async decode(token: string): Promise<string> {
     const result = jwt.verify(token, JWTService.secret)
-    return (result as Record<string, unknown>).id as string
+    return result as string
   }
 }
