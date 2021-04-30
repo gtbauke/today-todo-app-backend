@@ -38,6 +38,7 @@ model Task {
   title String
   description String?
   dueTo DateTime @db.Timestamptz()
+  completed Boolean @default(false)
 
   categories Category[]
 

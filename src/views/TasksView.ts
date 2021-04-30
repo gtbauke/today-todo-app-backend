@@ -6,6 +6,7 @@ export interface TaskResponse {
   description: string | null
   dueTo: Date
   ownerId: string
+  completed: boolean
   // TODO: add categories here
 }
 
@@ -17,6 +18,7 @@ export class TasksView {
       description: task.description,
       dueTo: task.dueTo,
       ownerId: task.userId,
+      completed: task.completed,
     }
   }
 

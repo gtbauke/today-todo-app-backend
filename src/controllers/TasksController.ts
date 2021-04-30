@@ -2,7 +2,7 @@ import { Request } from 'express'
 import * as yup from 'yup'
 
 import { Response } from './Response'
-import { TaskResponse, TasksView } from '../views/TasksVaiew'
+import { TaskResponse, TasksView } from '../views/TasksView'
 import { tasksValidator } from '../validators/TasksValidator'
 import { DatabaseClient } from '../services/DatabaseClient'
 
