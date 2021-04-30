@@ -11,11 +11,12 @@ export class JWTService {
     return new JWTService()
   }
 
-  public static async sign(payload: { id: string }): Promise<string> {
-    return jwt.sign(payload, JWTService.secret)
+  public static async sign(userId: string): Promise<string> {
+    return jwt.sign(userId, JWTService.secret)
   }
 
   public static async decode(token: string): Promise<string> {
-    return jwt.verify(token, JWTService.secret) as string
+    const result = jwt.verify(token, JWTService.secret)
+    return (result as Record<string, unknown>).id as string
   }
 }

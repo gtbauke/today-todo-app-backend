@@ -38,7 +38,7 @@ export class SessionsController {
         return res.status(400).json({ message: 'Invalid password' })
       }
 
-      const jwt = await JWTService.sign(user)
+      const jwt = await JWTService.sign(user.id)
       return res.status(200).json({ data: UsersView.login(user, jwt) })
     } catch (err) {
       const yupError = err as yup.ValidationError

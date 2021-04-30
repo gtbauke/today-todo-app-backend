@@ -26,6 +26,7 @@ export const authMiddleware = async (
 
     const decoded = await JWTService.decode(token)
     res.locals.currentUserId = decoded
+    next()
   } catch (err) {
     return res.status(500).json({ message: 'Internal Server Error' })
   }

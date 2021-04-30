@@ -24,6 +24,6 @@ export const usersValidator = {
 
   login: yup.object({
     email: yup.string().email().required(),
-    password: passwordValidator,
+    password: yup.string().required(),
   }),
 }

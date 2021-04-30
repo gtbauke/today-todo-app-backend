@@ -9,6 +9,7 @@ export const checkUserParamsMiddleware = async (
   next: NextFunction,
 ): Promise<void | Response<string>> => {
   const { id } = req.params as { id: string }
+  console.log(id)
 
   if (id !== res.locals.currentUserId) {
     return res.status(401).json({ message: 'Unauthorized' })

@@ -34,4 +34,37 @@ export class UsersController {
       return res.status(400).json({ message: yupError.errors })
     }
   }
+
+  public async view(
+    req: Request,
+    res: Response<UserResponse>,
+  ): Promise<Response<UserResponse>> {
+    const { id } = req.params as { id: string }
+    const user = await DatabaseClient.client.user.findUnique({
+      where: { id },
+    })
+
+    if (!user) {
+      return res
+        .status(400)
+        .json({ message: 'There are no users with the provided id' })
+    }
+
+    return res.status(200).json({ data: UsersView.single(user) })
+  }
+
+  public async me(
+    req: Request,
+    res: Response<UserResponse>,
+  ): Promise<Response<UserResponse>> {
+    const user = await DatabaseClient.client.user.findUnique({
+      where: { id: res.locals.currentUserId },
+    })
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' })
+    }
+
+    return res.status(200).json({ data: UsersView.single(user) })
+  }
 }
