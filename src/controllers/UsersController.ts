@@ -1,14 +1,17 @@
-import { Request, Response } from 'express'
+import { Request } from 'express'
 import * as yup from 'yup'
 
 import { DatabaseClient } from '../services/DatabaseClient'
 import { usersValidator } from '../validators/UsersValidator'
 import { PasswordEncryption } from '../services/PasswordEncryption'
-import { UsersView } from '../views/UsersView'
+import { UsersView, UserResponse } from '../views/UsersView'
+import { Response } from './Response'
 
 export class UsersController {
-  // TODO: add better types for response object
-  public async store(req: Request, res: Response): Promise<Response> {
+  public async store(
+    req: Request,
+    res: Response<UserResponse>,
+  ): Promise<Response<UserResponse>> {
     try {
       const {
         name,
