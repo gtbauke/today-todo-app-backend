@@ -9,3 +9,41 @@ datasource db {
 generator client {
   provider = "prisma-client-js"
 }
+
+model User {
+  id String @id @default(uuid())
+  name String
+  email String @unique
+  password String
+  profile Profile?
+  tasks Task[]
+}
+
+model Profile {
+  id String @id @default(uuid())
+  avatar String?
+
+  user User @relation(fields: [userId], references: [id])
+  userId String @unique
+}
+
+model Category {
+  id String @id @default(uuid())
+  name String @unique
+  tasks Task[]
+}
+
+model Task {
+  id String @id @default(uuid())
+  title String
+  description String?
+  dueTo DateTime @db.Timestamptz()
+
+  categories Category[]
+
+  createdAt DateTime @default(now()) @db.Timestamptz()
+  updatedAt DateTime @updatedAt @db.Timestamptz()
+
+  user User @relation(fields: [userId], references: [id])
+  userId String
+}
