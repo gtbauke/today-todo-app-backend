@@ -6,6 +6,11 @@ export interface UserResponse {
   email: string
 }
 
+export interface LoginUserResponse {
+  user: UserResponse
+  token: string
+}
+
 export class UsersView {
   public static single(user: User): UserResponse {
     return {
@@ -17,5 +22,12 @@ export class UsersView {
 
   public static many(users: User[]): UserResponse[] {
     return users.map(this.single)
+  }
+
+  public static login(user: User, token: string): LoginUserResponse {
+    return {
+      user: this.single(user),
+      token,
+    }
   }
 }
