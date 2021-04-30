@@ -6,4 +6,12 @@ export const tasksValidator = {
     description: yup.string(),
     dueTo: yup.date().required(),
   }),
+
+  update: yup.object({
+    title: yup.string(),
+    description: yup.string(),
+    dueTo: yup.date(),
+    completed: yup.bool(),
+    // todo: add categories
+  }),
 }

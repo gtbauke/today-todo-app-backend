@@ -48,4 +48,48 @@ export class TasksController {
 
     return res.status(200).json({ data: TasksView.many(tasks) })
   }
+
+  public async put(
+    req: Request,
+    res: Response<TaskResponse>,
+  ): Promise<Response<TaskResponse>> {
+    try {
+      const {
+        title,
+        description,
+        dueTo,
+        completed,
+      } = await tasksValidator.update.validate(req.body, { abortEarly: false })
+      const { id } = req.params as { id: string }
+
+      const task = await DatabaseClient.client.task.update({
+        where: { id },
+        data: {
+          // TODO: add categories
+          title,
+          description,
+          dueTo,
+          completed,
+        },
+      })
+
+      return res.status(200).json({ data: TasksView.single(task) })
+    } catch (err) {
+      const yupErrors = err as yup.ValidationError
+      return res.status(400).json({ message: yupErrors.errors })
+    }
+  }
+
+  public async delete(
+    req: Request,
+    res: Response<TaskResponse>,
+  ): Promise<Response<TaskResponse>> {
+    const { id } = req.params as { id: string }
+
+    await DatabaseClient.client.task.delete({
+      where: { id },
+    })
+
+    return res.status(204).json()
+  }
 }
