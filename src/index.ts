@@ -1,14 +1,16 @@
-import express from 'express'
-import cors from 'cors'
-import helmet from 'helmet'
-import morgan from 'morgan'
+import dotenv from 'dotenv'
 
-const app = express()
+import { DatabaseClient } from './services/DatabaseClient'
+import { PasswordEncryption } from './services/PasswordEncryption'
+import { App } from './App'
+import { UsersRoutes } from './routes/UsersRoutes'
 
-app.use(express.json())
-app.use(cors())
-app.use(morgan('dev'))
-app.use(helmet())
+dotenv.config()
+
+const app = new App()
+
+app.registerServices([DatabaseClient, PasswordEncryption])
+app.registerRoutes([UsersRoutes])
 
 const PORT = process.env.PORT || 3000
 app.listen(PORT, () => {
