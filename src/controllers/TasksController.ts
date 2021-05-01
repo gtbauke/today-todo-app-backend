@@ -86,6 +86,13 @@ export class TasksController {
   ): Promise<Response<TaskResponse>> {
     const { id } = req.params as { id: string }
 
+    const task = await DatabaseClient.client.task.findUnique({ where: { id } })
+    if (task?.userId !== res.locals.currentUserId) {
+      return res.status(401).json({
+        message: 'You do not have the rights permissions to delete this task',
+      })
+    }
+
     await DatabaseClient.client.task.delete({
       where: { id },
     })

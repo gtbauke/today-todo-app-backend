@@ -7,5 +7,6 @@ const router = Router()
 const controller = new CategoriesController()
 
 router.post('/categories', authMiddleware, controller.store)
+router.delete('/categories/:id', authMiddleware, controller.delete)
 
 export const CategoriesRoutes = router

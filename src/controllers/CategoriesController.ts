@@ -41,6 +41,16 @@ export class CategoriesController {
   ): Promise<Response<never>> {
     const { id } = req.params as { id: string }
 
+    const category = await DatabaseClient.client.category.findUnique({
+      where: { id },
+    })
+    if (category?.userId !== res.locals.currentUserId) {
+      return res.status(401).json({
+        message:
+          'You do not have the right permissions to delete this category',
+      })
+    }
+
     await DatabaseClient.client.category.delete({ where: { id } })
 
     return res.status(204).json()
