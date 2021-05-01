@@ -2,7 +2,11 @@ import { Request } from 'express'
 import * as yup from 'yup'
 
 import { Response } from './Response'
-import { CategoryResponse, CategoiresView } from '../views/CategoriesView'
+import {
+  CategoryResponse,
+  CategoiresView,
+  CategoryWithTasksResponse,
+} from '../views/CategoriesView'
 import { categoriesValidator } from '../validators/CategoriesValidator'
 import { DatabaseClient } from '../services/DatabaseClient'
 
@@ -33,6 +37,38 @@ export class CategoriesController {
       const yupError = err as yup.ValidationError
       return res.status(400).json({ message: yupError.errors })
     }
+  }
+
+  public async index(
+    req: Request,
+    res: Response<CategoryResponse[]>,
+  ): Promise<Response<CategoryResponse[]>> {
+    const categories = await DatabaseClient.client.category.findMany({
+      where: { userId: res.locals.currentUserId },
+    })
+
+    return res.status(200).json({ data: CategoiresView.many(categories) })
+  }
+
+  public async view(
+    req: Request,
+    res: Response<CategoryWithTasksResponse>,
+  ): Promise<Response<CategoryWithTasksResponse>> {
+    const { id } = req.params as { id: string }
+
+    const category = await DatabaseClient.client.category.findUnique({
+      where: { id },
+      include: { tasks: true },
+    })
+    if (category?.userId !== res.locals.currentUserId) {
+      return res.status(401).json({
+        message: 'You do not have the right permissions to view this category',
+      })
+    }
+
+    return res
+      .status(200)
+      .json({ data: CategoiresView.singleWithTasks(category) })
   }
 
   public async delete(
