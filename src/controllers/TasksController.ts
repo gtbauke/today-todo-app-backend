@@ -2,7 +2,7 @@ import { Request } from 'express'
 import * as yup from 'yup'
 
 import { Response } from './Response'
-import { TaskResponse, TasksView } from '../views/TasksView'
+import { TaskResponse, TasksView, TaskWithCategories } from '../views/TasksView'
 import { tasksValidator } from '../validators/TasksValidator'
 import { DatabaseClient } from '../services/DatabaseClient'
 
@@ -45,14 +45,34 @@ export class TasksController {
 
   public async index(
     req: Request,
-    res: Response<TaskResponse[]>,
-  ): Promise<Response<TaskResponse[]>> {
+    res: Response<TaskWithCategories[]>,
+  ): Promise<Response<TaskWithCategories[]>> {
     // TODO: add pagination, orderBy and search options
     const tasks = await DatabaseClient.client.task.findMany({
       where: { userId: res.locals.currentUserId },
+      include: { categories: true },
     })
 
-    return res.status(200).json({ data: TasksView.many(tasks) })
+    return res.status(200).json({ data: TasksView.manyWithCategories(tasks) })
+  }
+
+  public async view(
+    req: Request,
+    res: Response<TaskWithCategories>,
+  ): Promise<Response<TaskWithCategories>> {
+    const { id } = req.params as { id: string }
+    const task = await DatabaseClient.client.task.findUnique({
+      where: { id },
+      include: { categories: true },
+    })
+
+    if (task?.userId !== res.locals.currentUserId) {
+      return res.status(401).json({
+        message: 'You do not hve the right permissions to view this task',
+      })
+    }
+
+    return res.status(200).json({ data: TasksView.singleWithCategories(task) })
   }
 
   public async put(
