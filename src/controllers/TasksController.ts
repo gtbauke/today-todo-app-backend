@@ -9,8 +9,8 @@ import { DatabaseClient } from '../services/DatabaseClient'
 export class TasksController {
   public async store(
     req: Request,
-    res: Response<TaskResponse>,
-  ): Promise<Response<TaskResponse>> {
+    res: Response<TaskWithCategories>,
+  ): Promise<Response<TaskWithCategories>> {
     try {
       const {
         title,
@@ -32,9 +32,12 @@ export class TasksController {
           categories: { connect: categoriesData },
           // userId: res.locals.currentUserId,
         },
+        include: { categories: true },
       })
 
-      return res.status(201).json({ data: TasksView.single(task) })
+      return res
+        .status(201)
+        .json({ data: TasksView.singleWithCategories(task) })
     } catch (err) {
       console.log(err)
 
@@ -77,8 +80,8 @@ export class TasksController {
 
   public async put(
     req: Request,
-    res: Response<TaskResponse>,
-  ): Promise<Response<TaskResponse>> {
+    res: Response<TaskWithCategories>,
+  ): Promise<Response<TaskWithCategories>> {
     try {
       const {
         title,
@@ -100,11 +103,14 @@ export class TasksController {
           description,
           dueTo,
           completed,
-          categories: { connect: categoriesData },
+          categories: { set: categoriesData },
         },
+        include: { categories: true },
       })
 
-      return res.status(200).json({ data: TasksView.single(task) })
+      return res
+        .status(200)
+        .json({ data: TasksView.singleWithCategories(task) })
     } catch (err) {
       const yupErrors = err as yup.ValidationError
       return res.status(400).json({ message: yupErrors.errors })
