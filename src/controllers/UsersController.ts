@@ -25,7 +25,12 @@ export class UsersController {
 
       const hashedPassword = await PasswordEncryption.encrypt(password)
       const user = await DatabaseClient.client.user.create({
-        data: { name, email, password: hashedPassword },
+        data: {
+          name,
+          email,
+          password: hashedPassword,
+          profile: { create: { avatar: '' } },
+        },
       })
 
       return res.status(201).json({ data: UsersView.single(user) })

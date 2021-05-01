@@ -3,6 +3,7 @@ import cors from 'cors'
 import helmet from 'helmet'
 import morgan from 'morgan'
 import { Server } from 'http'
+import path from 'path'
 
 interface IService<T = unknown> {
   init(): T
@@ -18,6 +19,11 @@ export class App {
     this.express.use(cors())
     this.express.use(morgan('dev'))
     this.express.use(helmet())
+
+    this.express.use(
+      '/uploads',
+      express.static(path.resolve(__dirname, '..', 'temp', 'uploads')),
+    )
   }
 
   public registerServices(services: IService[]): void {
