@@ -16,7 +16,12 @@ export class TasksController {
         title,
         description,
         dueTo,
+        categories,
       } = await tasksValidator.store.validate(req.body, { abortEarly: false })
+
+      const categoriesData = categories
+        ? categories.map(c => ({ name: c }))
+        : []
 
       const task = await DatabaseClient.client.task.create({
         data: {
@@ -24,6 +29,7 @@ export class TasksController {
           description,
           dueTo,
           user: { connect: { id: res.locals.currentUserId } },
+          categories: { connect: categoriesData },
           // userId: res.locals.currentUserId,
         },
       })
@@ -59,17 +65,22 @@ export class TasksController {
         description,
         dueTo,
         completed,
+        categories,
       } = await tasksValidator.update.validate(req.body, { abortEarly: false })
       const { id } = req.params as { id: string }
+
+      const categoriesData = categories
+        ? categories.map(c => ({ name: c }))
+        : []
 
       const task = await DatabaseClient.client.task.update({
         where: { id },
         data: {
-          // TODO: add categories
           title,
           description,
           dueTo,
           completed,
+          categories: { connect: categoriesData },
         },
       })
 
