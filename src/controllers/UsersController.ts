@@ -4,7 +4,7 @@ import * as yup from 'yup'
 import { DatabaseClient } from '../services/DatabaseClient'
 import { usersValidator } from '../validators/UsersValidator'
 import { PasswordEncryption } from '../services/PasswordEncryption'
-import { UsersView, UserResponse } from '../views/UsersView'
+import { UsersView, UserResponse, UserWithProfile } from '../views/UsersView'
 import { Response } from './Response'
 
 export class UsersController {
@@ -60,16 +60,17 @@ export class UsersController {
 
   public async me(
     req: Request,
-    res: Response<UserResponse>,
-  ): Promise<Response<UserResponse>> {
+    res: Response<UserWithProfile>,
+  ): Promise<Response<UserWithProfile>> {
     const user = await DatabaseClient.client.user.findUnique({
       where: { id: res.locals.currentUserId },
+      include: { profile: true },
     })
 
     if (!user) {
       return res.status(404).json({ message: 'User not found' })
     }
 
-    return res.status(200).json({ data: UsersView.single(user) })
+    return res.status(200).json({ data: UsersView.singleWithProfile(user) })
   }
 }
