@@ -17,6 +17,7 @@ model User {
   password String
   profile Profile?
   tasks Task[]
+  categories Category[]
 }
 
 model Profile {
@@ -31,6 +32,9 @@ model Category {
   id String @id @default(uuid())
   name String @unique
   tasks Task[]
+
+  user User @relation(fields: [userId], references: [id])
+  userId String
 }
 
 model Task {

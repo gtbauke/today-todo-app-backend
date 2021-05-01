@@ -8,13 +8,20 @@ import { JWTService } from './services/JWTService'
 import { SessionsRoutes } from './routes/SessionsRoutes'
 import { TasksRoutes } from './routes/TasksRoutes'
 import { ProfilesRoutes } from './routes/ProfileRoutes'
+import { CategoriesRoutes } from './routes/CategoriesRoutes'
 
 dotenv.config()
 
 const app = new App()
 
 app.registerServices([DatabaseClient, PasswordEncryption, JWTService])
-app.registerRoutes([UsersRoutes, SessionsRoutes, TasksRoutes, ProfilesRoutes])
+app.registerRoutes([
+  UsersRoutes,
+  SessionsRoutes,
+  TasksRoutes,
+  ProfilesRoutes,
+  CategoriesRoutes,
+])
 
 const PORT = process.env.PORT || 3000
 app.listen(PORT, () => {
