@@ -92,8 +92,20 @@ export class TasksController {
       } = await tasksValidator.update.validate(req.body, { abortEarly: false })
       const { id } = req.params as { id: string }
 
+      const oldTask = await DatabaseClient.client.task.findUnique({
+        where: { id },
+        select: { categories: true },
+      })
+
+      if (!oldTask) {
+        return res.status(404).json({ message: 'Task not found' })
+      }
+
       const categoriesData = categories
-        ? categories.map(c => ({ name: c }))
+        ? [
+            ...oldTask.categories.map(c => ({ name: c.name })),
+            ...categories.map(c => ({ name: c })),
+          ]
         : []
 
       const task = await DatabaseClient.client.task.update({
