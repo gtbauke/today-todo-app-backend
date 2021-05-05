@@ -6,6 +6,7 @@ import {
   CategoryResponse,
   CategoiresView,
   CategoryWithTasksResponse,
+  CategoryWithMetadata,
 } from '../views/CategoriesView'
 import { categoriesValidator } from '../validators/CategoriesValidator'
 import { DatabaseClient } from '../services/DatabaseClient'
@@ -41,13 +42,26 @@ export class CategoriesController {
 
   public async index(
     req: Request,
-    res: Response<CategoryResponse[]>,
-  ): Promise<Response<CategoryResponse[]>> {
+    res: Response<CategoryWithMetadata[]>,
+  ): Promise<Response<CategoryWithMetadata[]>> {
     const categories = await DatabaseClient.client.category.findMany({
       where: { userId: res.locals.currentUserId },
+      include: { tasks: true },
     })
 
-    return res.status(200).json({ data: CategoiresView.many(categories) })
+    const withMetadata = categories.map(c => {
+      return {
+        id: c.id,
+        name: c.name,
+        userId: c.userId,
+        tasks: c.tasks.length,
+        completedTasks: c.tasks.filter(t => t.completed).length,
+      }
+    })
+
+    return res
+      .status(200)
+      .json({ data: CategoiresView.manyWithMetadata(withMetadata) })
   }
 
   public async view(

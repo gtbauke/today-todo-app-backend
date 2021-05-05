@@ -13,6 +13,13 @@ export interface CategoryWithTasksResponse {
   tasks: TaskResponse[]
 }
 
+export interface CategoryWithMetadata {
+  id: string
+  name: string
+  tasks: number
+  completedTasks: number
+}
+
 export class CategoiresView {
   public static single(category: Category): CategoryResponse {
     return {
@@ -23,6 +30,17 @@ export class CategoiresView {
 
   public static many(categories: Category[]): CategoryResponse[] {
     return categories.map(this.single)
+  }
+
+  public static manyWithMetadata(
+    categories: (Category & { tasks: number; completedTasks: number })[],
+  ): CategoryWithMetadata[] {
+    return categories.map(c => ({
+      id: c.id,
+      name: c.name,
+      tasks: c.tasks,
+      completedTasks: c.completedTasks,
+    }))
   }
 
   public static singleWithTasks(
